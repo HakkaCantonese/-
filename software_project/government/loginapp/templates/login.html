@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en"style="height: 100%;">
+<head>
+    <meta charset="UTF-8">
+    <title>登录界面</title>
+    <link rel="stylesheet" href="{% static 'css/login_bg.css' %}">
+</head>
+<body id='login_bg' background="{% static 'picture/login_bg.jpg' %}" style="height: 100%">
+    <!--背景图片-->
+    <div class="form_login">
+        <h1 style="color:black">&nbsp&nbsp&nbsp&nbsp政府大数据处理平台</h1>
+        <form action="/logintest/" method="post">
+            {% csrf_token %}
+            <div class="username">
+                <span class="user-icon"></span>
+                <input type="text" name="user" style="width:350px;height: 40px" placeholder="请输入用户名"/>
+            </div>
+            <br/>
+            <div class="password">
+                <span class="passwd-ico"></span>
+                <input type="password" name="passwd" style="width:350px;height: 40px" placeholder="请输入密码"/>
+            </div>
+            <br/>
+            <!--验证码-->
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-7 col-xs-7">
+                        <input type="text" class="form-control" style="width:165px;height: 40px" id="id_code" placeholder="请输入验证码" name="check_code">
+                        <img src="/check_code.html"  style="position:absolute; width="100" height="46px"; onclick="this.src=this.src+'?'">
+                </div>
+            </div>
+            <br/>
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            <input id='submit_button' type="submit"  style="width:100px;height: 40px;" value="登录"/>
+        </form>
+    </div>
+    <script>
+        var ret = {{ ret|safe }};
+        console.log(ret);
+        if(typeof(ret)!=undefined){ alert(ret);}
+    </script>
+    <script src="{% static 'js/jquery-3.1.1.js' %}"></script>
+    <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.js' %}"></script>
+
+</body>
+</html>
+
+
+

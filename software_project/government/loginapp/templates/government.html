@@ -1,0 +1,2027 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>government</title>
+    <link rel="stylesheet" href="{% static 'css/government.css' %}">
+    <link rel='icon' href='w.ico' type='image/x-icon'>
+    <script type="text/javascript" src="{% static 'js/echarts.min.js' %}"></script>
+    <script src="{% static 'js/echarts-gl.min.js' %}"></script>
+    <script src="{% static 'js/guangdong.js' %}"></script>
+    <script src="{% static 'js/jquery-3.2.1.js' %}"></script>
+     <style type="text/css">
+        #view3_div {
+            height: 700px;
+            width:1097px;
+        }
+        #header {
+            color:white;
+            float:left;
+            width:1100px;
+            padding:5px;
+            margin-left:130px;
+        }
+        #section{
+            position:absolute;
+            left:150px;
+            width:350px;
+            height:20%;
+            top:100px;
+            float:left;
+            padding:10px;
+        }
+        .sidenav {
+            position:fixed;
+            line-height:20px;
+            background-color:#778899;
+            height:100%;
+            width:120px;
+            float:left;
+            padding:5px;
+            z-index:9999;
+        }
+
+        .sidenav a:link {color: #fff}		/* 未访问的链接 */
+        .sidenav a:visited {color:#fff}	/* 已访问的链接 */
+        .sidenav a:hover {color:#fff}	/* 鼠标移动到链接上 */
+        .sidenav a:active {color: #fff}
+        .sidenav a{ text-decoration:none}
+         #header a{ text-decoration:none}
+    </style>
+</head>
+<body id='login_bg' background="{% static 'picture/login_bg7.PNG' %}" style="height:4000px;">
+    <div id="header">
+        <nobr>
+            <h1><strong>&nbsp&nbsp&nbsp&nbsp政府大数据治理平台</strong>
+                <nobr>
+                    <a href="/logout">
+                        <span style="color:white;font-size:10px;float:right">&nbsp&nbsp退出系统</span>
+                    </a>
+                    <span style="color:white;font-size:12px;float:right">hello!{{ user|safe }}</span>
+                </nobr>
+            </h1>
+        </nobr>
+    </div>
+    <div class="sidenav">
+            <p>
+                <h1 style="color:white">导航</h1><br>
+                <h3><a href="#C0"><img src="{% static 'picture/pic1.png' %}"> 异常事件</a></h3><br>
+                <h3><a href="#C1"><img src="{% static 'picture/pic2.png' %}"> 民生分析</a></h3><br>
+                <h3><a href="#C2"><img src="{% static 'picture/pic3.png' %}"> 街道情况</a></h3><br>
+                <h3><a href="#C3"><img src="{% static 'picture/pic4.png' %}"> 热点社区</a></h3><br>
+                <h3><a href="#C4"><img src="{% static 'picture/pic5.png' %}"> 事情结办</a></h3><br>
+            </p>
+    </div>
+
+
+    <div id="section">
+        <h3 style="color:white"><a name="C0">异常事件实时滚动</a></h3>
+         <div>
+        <marquee align="right"
+                  direction="up"
+                  behavior="scroll"
+                 scrollamount="1"
+                  scrolldelay="100"
+                 loop="-1"
+                  width="1000"
+                  height="50"
+                  bgcolor="#fff"
+                  hspace="10"
+                 vspace="10"
+                    white-space:nowrap
+                 onMouseOut="this.start();"
+                onMouseOver="this.stop();">
+                <div id="warning" style="background-color: white"></div>
+        </marquee>
+    </div>
+    <script>
+        var myrecord = [];
+        myrecord.push({{record|safe}});
+        var myHTML = "";
+        var i;
+        for(i=0;i<myrecord[0].length;i++)
+        {
+            myHTML +='<span style="color:black">'+ myrecord[0][i][0]+'<span>'+','+'</span>'+ '</span>'+
+                     '<span style="color:green">'+ myrecord[0][i][1]+'<span style="color:black">'+'的'+'</span>' + '</span>'+
+                     '<span style="color:cyan">'+ myrecord[0][i][2]+'<span style="color:black">'+'从'+ '</span>'+ '</span>'+
+                     '<span style="color:purple">'+ myrecord[0][i][3] +'<span style="color:black">'+'接到'+ '</span>'+ '</span>'+
+                     '<span style="color:red">'+ myrecord[0][i][4] + '</span>'+
+                     '<span style="color:blue">'+ myrecord[0][i][5] +'<span style="color:black">'+',请'+ '</span>'+ '</span>'+
+                     '<span style="color:#8a2be2">'+ myrecord[0][i][6] +'<span style="color:black">'+'尽快前往处理'+  '</span>'+'</span>'+
+                      '</br>';
+        }
+        document.getElementById('warning').innerHTML =  myHTML;
+    </script>
+          <input type="button" onclick="myFunction()" value="显示警告框" />
+        <script>
+function myFunction(){
+	alert({{alert|safe}}[0]);
+	alert({{alert|safe}}[1]);
+}
+</script>
+
+
+    <h3 style="color:white"><a name="C1">民生分析:</a></h3>
+    <form action="/view1/" method="get">
+        {% csrf_token %}
+        <div>
+            <span style="color:white">选择特定日期:</span>
+            <input type="date" name="date" value="2018-10-30" id="date">
+            <nobr><input type="button" value="查看" id="view1"/></nobr><br/>
+        </div>
+    </form>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="visualization1" style="width: 600px;height:600px;left:100px"></div>
+
+    <h3 style="color:white;"><a name="C2">各街道民生事件情况</a></h3>
+    <form action="/view2/" method="get">
+        {% csrf_token %}
+        <div>
+            <span style="color:white">特定月份:</span>
+                <select name="month" id="month">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10" selected>10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select>
+            <nobr><input type="button" value="查看" id="view2"/></nobr><br/>
+        </div>
+    </form>
+    <div id="visualization2" style="width: 800px;height:800px;left:100px" ></div>
+
+    <h3 style="color:white"><a name="C3">热点社区分析</a></h3>
+    <form action="/view3/" method="get">
+        {% csrf_token %}
+        <div>
+            <span style="color:white">特定月份:</span>
+                <select name="view3_month" id="view3_month">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10" selected>10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select>
+           <nobr><input type="button" value="查看" id="view3"/></nobr><br/>
+        </div>
+    </form>
+    <br/><br/><br/><br/>
+    <div id="view3_div" style="width: 800px;height:800px;left:100px"></div>
+
+    <h3 style="color:white"><a name="C4">事情结办分析</a></h3>
+    <form action="/view4_1/" method="get">
+        {% csrf_token %}
+        <div style ="overflow-x:hidden; overflow-y:auto">
+            <span style="color:white">特定月份:</span>
+                <select name="month" id="view4_month">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10" selected>10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select>
+            <nobr><input type="button" value="查看" id="view4_1"/></nobr><br/>
+        </div>
+    </form>
+    <form action="/view4_2/" method="get">
+        {% csrf_token %}
+        <div style ="overflow-x:hidden; overflow-y:auto">
+            <span style="color:white">特定季度:</span>
+            <select name="quarter" id="quarter">
+                <option value="1">第1季度</option>
+                <option value="2">第2季度</option>
+                <option value="3">第3季度</option>
+                <option value="4" selected>第4季度</option>
+            </select>
+            <nobr><input type="button" value="查看" id="view4_2"/></nobr><br/>
+        </div>
+    </form>
+    <form action="/view4_3/" method="get">
+        {% csrf_token %}
+        <div style ="overflow-x:hidden; overflow-y:auto">
+            <span style="color:white">选择时间范围:</span><br/>
+            <nobr><span style="color:white">起始时间:</span><input type="date" name="startDate" value="2018-10-30" id="startDate"></nobr>
+            <nobr><span style="color:white">终止时间:</span><input type="date" name="endDate" value="2018-10-30" id="endDate"></nobr>
+            <nobr><input type="button" value="查看" id="view4_3"/></nobr><br/>
+        </div>
+    </form>
+        <br/><br/>
+    <span id="info" style="color:white;left:100px"></span><br/><br/>
+    <div id="visualization4" style="width: 800px;height:800px;left:100px"></div>
+            <!--侧边栏-->
+       <script type="text/javascript">
+        var documentHeight = 0;
+        var topPadding = 15;
+        $(function() {
+            var offset = $("#nav").offset();
+            documentHeight = $(document).height();
+            $(window).scroll(function() {
+                var sideBarHeight = $("#nav").height();
+                if ($(window).scrollTop() > offset.top) {
+                    var newPosition = ($(window).scrollTop() - offset.top) + topPadding;
+                    var maxPosition = documentHeight - (sideBarHeight + 368);
+                    if (newPosition > maxPosition) {
+                        newPosition = maxPosition;
+                    }
+                    $("#nav").stop().animate({
+                        marginTop: newPosition
+                    });
+                } else {
+                    $("#nav").stop().animate({
+                        marginTop: 0
+                    });
+                };
+            });
+        });
+        </script>
+
+<script>
+        var flag1 = 0;
+        var data1={{view1_lst1|safe}};
+        var data2={{view1_lst2|safe}};
+        $("#view1").click(function(){
+            flag1 = 1;
+            $.ajax(
+                    {
+                        url:'/view1/',
+                        type:'GET',
+                        data:{
+                            "date":$("#date").val()
+                        },
+                        success:function(resp) {
+                            if(resp.view1_lst2.length!=0){data1=resp.view1_lst1;data2=resp.view1_lst2;}
+                            if(resp.view1_lst2.length==0){alert('抱歉!目前尚无数据')}
+                            // 基于准备好的dom，初始化echarts实例
+                            var myChart = echarts.init(document.getElementById('visualization1'));
+                            var option = {
+                                title: {
+                                    text: '查看事件性质',
+                                    x: '40%',
+                                    textStyle: {color: 'white'}
+                                },
+                                tooltip: {
+                                    trigger: 'item',
+                                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                                },
+                                 toolbox: {
+                                   show:true,
+                                x:'500',
+                                feature: {
+                                        saveAsImage: {}
+                                    },
+                                    iconStyle:{normal:{borderColor:'white'}}
+                                },
+                                legend: {
+                                    type: 'scroll',
+                                    orient: 'vertical',
+                                    left: 'left',
+                                    textStyle: {color: 'white'},
+                                    data: data1
+                                },
+                                series: [
+                                    {
+                                        name: '事件性质',
+                                        type: 'pie',
+                                        radius: '70%',
+                                        center: ['60%', '60%'],
+                                        data: data2,
+                                        itemStyle: {
+                                            emphasis: {
+                                                shadowBlur: 10,
+                                                shadowOffsetX: 0,
+                                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        myChart.setOption(option);}
+
+                            } );
+        });
+
+        setInterval(function(){ $.ajax( {
+                        url:'/view1/',
+                        type:'GET',
+                        data:{
+                            "date":$("#date").val()
+                        },
+                        success:function(resp){
+                            if(resp.view1_lst2.length!=0){data1=resp.view1_lst1;data2=resp.view1_lst2;}
+
+                            // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('visualization1'));
+    var option = {
+        title: {
+            text: '查看事件性质',
+            x: '50%',
+            textStyle: {color: 'white'}
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+           toolbox: {
+                                   show:true,
+                                x:'500',
+                                feature: {
+                                        saveAsImage: {}
+                                    },
+                                    iconStyle:{normal:{borderColor:'white'}}
+                                },
+        legend: {
+            type: 'scroll',
+            orient: 'vertical',
+            left: 'left',
+            textStyle: {color: 'white'},
+            data:data1
+        },
+        series: [
+            {
+                name: '事件性质',
+                type: 'pie',
+                radius: '70%',
+                center: ['60%', '60%'],
+                data:data2,
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    }
+                        myChart.setOption(option);
+                        }}) }, 10000);
+
+
+
+
+
+        if(flag1==0){
+               // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('visualization1'));
+    var option = {
+        title: {
+            text: '查看事件性质',
+            x: '50%',
+            textStyle: {color: 'white'}
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+         toolbox: {
+                                   show:true,
+                                x:'500',
+                                feature: {
+                                        saveAsImage: {}
+                                    },
+                                    iconStyle:{normal:{borderColor:'white'}}
+                                },
+        legend: {
+            type: 'scroll',
+            orient: 'vertical',
+            left: 'left',
+            textStyle: {color: 'white'},
+            data: {{view1_lst1|safe}}
+        },
+        series: [
+            {
+                name: '事件性质',
+                type: 'pie',
+                radius: '70%',
+                center: ['60%', '60%'],
+                data:{{view1_lst2|safe}},
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    };
+
+		        // 使用刚指定的配置项和数据显示图表。
+		    myChart.setOption(option);
+
+        }
+
+    </script>
+
+         <script>
+        var flag2 = 0;
+        $("#view2").click(function(){
+            flag2 = 1;
+            $.ajax(
+                    {
+                        url:'/view2/',
+                        type:'GET',
+                        data:{
+                             "month":$("#month").val()
+                        },
+                        success:function(resp) {
+
+                                                   if(resp.view2_lst1==null){alert('抱歉！目前尚无数据')}
+
+                                                          // 基于准备好的dom，初始化echarts实例
+                                var myChart = echarts.init(document.getElementById('visualization2'));
+                            		function myfunction1(){
+                                        var myseries = [];
+                                        var name = resp.view2_lst3;
+                                        var data = resp.view2_lst4;
+                                        if (data==''){alert('抱歉！目前尚无数据');}
+                                        else{
+                                            for (var i=0;i<name.length;i++){
+                                            myseries.push({name:name[i],type:'bar',stack: '总量',label:
+                                            {normal:{show: true,position: 'insideRight'}},data:data[i]});
+                                        }
+                                        return myseries;}
+                                    }
+
+                            		var option = {
+                                        title: {
+            text: '查看民生事件情况',
+            x: '40%',
+            textStyle: {color: 'white'}
+        },
+                                        textStyle:{color:'white'},
+                                        tooltip : {
+                                            trigger: 'axis',
+                                            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                                                type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                                             }
+                                         },
+                                toolbox: {
+                                feature: {
+                                    show:true,
+                                    x:'600',
+                                        saveAsImage: {}
+                                    },
+                                    iconStyle:{normal:{borderColor:'white'}}
+                                },
+                                         legend: {
+                                             orient: 'vertical',
+                                             align: 'left',
+                                             left:0,
+                                             textStyle:{color:'white'},
+                                            data: resp.view2_lst3
+                                        },
+
+                                        grid: {
+                                            left: '11%',
+                                            right: '4%',
+                                            bottom: '3%',
+                                            containLabel: true
+                                         },
+                                        xAxis:  {
+                                            type: 'category',
+                                            data: resp.view2_lst1
+                                        },
+                                        yAxis: {
+                                            type: 'value'
+                                        },
+                                        series: myfunction1()
+                                    };
+
+                                    // 使用刚指定的配置项和数据显示图表。
+                                    myChart.setOption(option);
+
+                                                    }} );
+        });
+
+        setInterval(function(){ $.ajax( {
+                        url:'/view2/',
+                        type:'GET',
+                        data:{
+                            "month":$("#month").val()
+                        },
+                        success:function(resp){
+                            var myChart = echarts.init(document.getElementById('visualization2'));
+                            	function myfunction1(){
+                                    var myseries = [];
+                                    var name = resp.view2_lst3;
+                                    var data = resp.view2_lst4;
+                                    if (data==''){alert('抱歉！目前尚无数据');}
+                                    else{
+                                        for (var i=0;i<name.length;i++){
+                                        myseries.push({name:name[i],type:'bar',stack: '总量',label:
+                                        {normal:{show: true,position: 'insideRight'}},data:data[i]});
+                                    }
+                                    return myseries;}
+                                }
+
+                            	var option = {
+                                    title: {
+            text: '查看民生事件性质',
+            x: '40%',
+            textStyle: {color: 'white'}
+        },
+                                    textStyle:{color:'white'},
+                                    tooltip : {
+                                        trigger: 'axis',
+                                        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                                            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                                         }
+                                     },
+                                     toolbox: {
+                                         show:true,
+                                         x:'600',
+                                feature: {
+                                        saveAsImage: {}
+                                    },
+                                    iconStyle:{normal:{borderColor:'white'}}
+                                },
+                                     legend: {
+                                         orient: 'vertical',
+                                         align: 'left',
+                                         left:0,
+                                         textStyle:{color:'white'},
+                                        data: resp.view2_lst3
+                                    },
+                                    grid: {
+                                        left: '11%',
+                                        right: '4%',
+                                        bottom: '3%',
+                                        containLabel: true
+                                     },
+                                    xAxis:  {
+                                        type: 'category',
+                                        data: resp.view2_lst1
+                                    },
+                                    yAxis: {
+                                        type: 'value'
+                                    },
+                                    series: myfunction1()
+                                };
+
+                                // 使用刚指定的配置项和数据显示图表。
+                                myChart.setOption(option);
+
+                                                }}) }, 8000);
+
+
+
+
+
+        if(flag2==0){
+              var myChart = echarts.init(document.getElementById('visualization2'));
+              	function myfunction1(){
+                      var myseries = [];
+                      var name = {{ view2_lst3|safe }};
+                      var data = {{ view2_lst4|safe }};
+                      if (data==''){alert('抱歉！目前尚无数据!');}
+                      else{
+                          for (var i=0;i<name.length;i++){
+                          myseries.push({name:name[i],type:'bar',stack: '总量',label:
+                          {normal:{show: true,position: 'insideRight'}},data:data[i]});
+                      }
+                      return myseries;}
+                  }
+
+              	var option = {
+                    title: {
+            text: '查看民生事件情况',
+            x: '40%',
+            textStyle: {color: 'white'}
+        },
+                      textStyle:{color:'white'},
+                      tooltip : {
+                          trigger: 'axis',
+                          axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                              type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                           }
+                       },
+                     toolbox: { show:true,
+                                x:'600',
+                                feature: {
+                                        saveAsImage: {}
+                                    },
+                                    iconStyle:{normal:{borderColor:'white'}}
+                                },
+                       legend: {
+                           orient: 'vertical',
+                           align: 'left',
+                           left:0,
+                           textStyle:{color:'white'},
+                          data: {{ view2_lst3|safe }}
+                      },
+                      grid: {
+                          left: '11%',
+                          right: '4%',
+                          bottom: '3%',
+                          containLabel: true
+                       },
+                      xAxis:  {
+                          type: 'category',
+                          data: {{ view2_lst1|safe }}
+                      },
+                      yAxis: {
+                          type: 'value'
+                      },
+                      series: myfunction1()
+                  };
+
+                  // 使用刚指定的配置项和数据显示图表。
+                  myChart.setOption(option);
+
+                                  }
+         </script>
+
+    <script>
+        var flag3 = 0;
+        $("#view3").click(function(){
+            flag3 = 1;
+            $.ajax(
+                    {
+                        url:'/view3/',
+                        type:'GET',
+                        data:{
+                            "month":$("#view3_month").val()
+                        },
+                        success:function(resp){
+                             var rawData = [];
+
+            var data = resp.view3_lst3;
+
+            if (data.length==0){alert('抱歉！目前尚无数据');}
+            else {
+                for (var i = 0; i < data.length; i++) {
+                    rawData.push({name: Object.keys(data[i])[0], value: data[i][Object.keys(data[i])[0]]});
+                }
+            }
+
+
+        function Map(id,cityData,cityName){
+            var name=cityData.map(name=>name.name);
+
+
+            var chart =  echarts.init(document.getElementById(id));
+            $.getJSON('{% static 'js/pingsan.json' %}', function (usaJson) {
+             echarts.registerMap('city', usaJson);
+            var geoCoordMap = {
+            '碧岭社区':[114.366572,22.714099],
+            '和平社区':[114.355455,22.696885],
+            '江岭社区':[114.373582,22.697497],
+			'金龟社区':[114.405579,22.662021],
+			'金沙社区':[114.40294,22.752892],
+			'坑梓社区':[114.395825,22.756225],
+			'老坑社区':[114.365983,22.73284],
+			'六和社区':[114.344604,22.697302],
+			'六联社区':[114.40294,22.741091],
+			'龙田社区':[114.369274,22.742836],
+			'马峦社区':[114.355687,22.666458],
+			'南布社区':[114.372859,22.705973],
+			'坪环社区':[114.372859,22.705973],
+			'坪山社区':[114.346916,22.69265],
+			'沙湖社区':[114.325936,22.682307],
+			'沙坣社区':[114.373923,22.693111],
+			'沙田社区':[114.406319,22.763419],
+			'石井社区':[114.389032,22.694423],
+			'汤坑社区':[114.320551,22.671878],
+			'田头社区':[114.406326,22.697318],
+			'田心社区':[114.329624,22.623161],
+			'秀新社区':[114.38354,22.746137],
+			'竹坑社区':[114.372771,22.704758]
+        };
+
+        var option = {
+{#            legend: {#}
+{#                 textStyle:{color:'white'},#}
+{#            },#}
+             toolbox: {
+                                show:true,
+                                x:'500',
+                                feature: {
+                                        saveAsImage: {}
+                                    },
+                                    iconStyle:{normal:{borderColor:'white'}}
+                                },
+            xAxis: [{
+                type: "value",
+                axisLine: {
+                    show: false
+                },
+                axisTick: {
+                    show: false
+                },
+                axisLabel: {
+                    show: false
+                },
+                splitLine: {
+                    show: false
+                }
+            }],
+            yAxis: [{
+                type: "category",
+
+                axisLine: {
+                    show: false
+                },
+                axisTick: {
+                    show: false,
+                    alignWithLabel: true
+                },
+                axisLabel: {
+                    textStyle:{
+                       show:false
+                    }
+                },
+                data:name
+            }],
+            grid: [{
+                left: "70%",
+                right: "20",
+                bottom: "5",
+                top:'60%',
+                containLabel: true
+            }],
+            title:[{
+                text:cityName+'热点社区',
+                x:0,
+                textStyle:{
+                    color:'rgb(0,147,203)',
+                    fontSize:14
+                }
+            },{
+                text: "热点社区排名Top10",
+                textStyle: {
+                    color: "#fff",
+                    fontWeight: "bold",
+                    fontSize: 14
+                },
+                top: "55%",
+                left: "69%"
+            }],
+            tooltip:[{
+                show:true
+            }],
+{#            backgroundColor:'#fff',#}
+
+            geo:{
+                left:'10',
+                show:true,
+                map:'city',
+                type:'map',
+                zlevel:0,
+                label: {
+                    normal: {
+                        show: false
+                    },
+                    emphasis: {
+                        show: true,
+                        fontSize:20,
+                        color:'rgb(255,255,255)'
+                    }
+                },
+                roam: false,
+                itemStyle: {
+                    normal: {
+                        color: 'rgb(0,90,157)',
+                        borderColor: 'rgb(0,90,157)',
+                        borderWidth: 1
+                    },
+                    emphasis: {
+                        areaColor: '#2B91B7'
+
+
+
+                    }
+                }
+            },
+            series: [{
+                name: "事件数量",
+                type: "bar",
+                data: cityData,
+                barWidth:7,
+                barCategoryGap: "50%",
+                zlevel:2,
+                label: {
+                    normal: {
+                        left:'right',
+                        show: true,
+                        position: "right",
+                        formatter: function(params) {
+                            return params.data.value;
+                        },
+                        textStyle: {color: "white"} //color of value
+                    }
+                },
+        itemStyle: {
+            normal: {
+                color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
+                    offset: 0,
+                    color: "rgb(231,91,250)" // 0% 处的颜色
+                }, {
+                    offset: 1,
+                    color: "rgb(80,50,180)" // 100% 处的颜色
+                }], false),
+                barBorderRadius: [30, 30,30, 30]
+            }
+        }
+    },]
+
+        };//option
+        chart.setOption(option);
+
+        function renderEachCity() {
+            var width=$('#'+id).width();
+            var height=$('#'+id).height();
+            // option.xAxis.push();
+            // option.yAxis.push();
+            // option.grid.push();
+            // option.series.push();
+            echarts.util.each(rawData, function(dataItem, idx) {
+
+                var geoCoord = geoCoordMap[dataItem.name];
+                var coord = chart.convertToPixel('geo', geoCoord);
+                idx += '';
+
+
+                option.xAxis.push({
+                    id: idx,
+                    gridId: idx,
+                    type: 'category',
+                    //show: true,
+                    data:[dataItem.name],
+                    boundaryGap:true,
+                    axisLine: {
+                        show: false
+                    },
+                    axisTick: {
+
+
+                        show: false
+
+                    },
+                    axisLabel: {
+                        interval: 0,
+                        fontSize: 10,
+
+                        color: "#fff"
+
+
+
+
+                    }
+                });
+                option.yAxis.push({
+                    id: idx,
+                    gridId: idx,
+                    show: false
+                });
+                option.grid.push({
+                    id: idx,
+                    width: 10,
+                    height: (dataItem.value),
+                    left: coord[0],
+                    bottom:height-coord[1]+10
+                });
+
+
+                option.series.push({
+                    name:dataItem.name,
+                    type: 'bar',
+                    xAxisId: idx,
+                    yAxisId: idx,
+                     zlevel:1,
+                    road:true,
+                    itemStyle: {
+                        normal: {
+                            color:new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                offset: 0,
+                                color: 'rgba(231,91,250,1)'
+                            }, {
+                                offset: 1,
+                                color: 'rgba(80,50,180,0.8)'
+                            }], false),
+                            borderColor:'rgba(255,255,255,0.8)',
+                            barBorderRadius: [30, 30,30, 30],
+                        },
+                        emphasis:{
+                            color:new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                offset: 1,
+                                color: 'rgb(231,91,250)'
+                            }, {
+                                offset: 0,
+                                color: 'rgb(80,50,180)'
+                            }], false)
+                        }
+                    },
+                    data: [dataItem.value]
+                });
+
+
+            });
+            chart.setOption(option);
+        }
+
+        renderEachCity();
+
+
+        chart.on('click',function(params){console.log(params);})
+    });
+    }
+    Map('view3_div',rawData,'深圳市');
+
+                        }
+                    }
+            );
+        });
+
+        setInterval(function(){             $.ajax(
+                    {
+                        url:'/view3/',
+                        type:'GET',
+                        data:{
+                            "month":$("#view3_month").val()
+                        },
+                        success:function(resp){
+                             var rawData = [];
+
+            var data = resp.view3_lst3;
+
+
+
+                for (var i = 0; i < data.length; i++) {
+                    rawData.push({name: Object.keys(data[i])[0], value: data[i][Object.keys(data[i])[0]]});
+                }
+
+
+
+        function Map(id,cityData,cityName){
+            var name=cityData.map(name=>name.name);
+
+
+            var chart =  echarts.init(document.getElementById(id));
+            $.getJSON('{% static 'js/pingsan.json' %}', function (usaJson) {
+             echarts.registerMap('city', usaJson);
+            var geoCoordMap = {
+            '碧岭社区':[114.366572,22.714099],
+            '和平社区':[114.355455,22.696885],
+            '江岭社区':[114.373582,22.697497],
+			'金龟社区':[114.405579,22.662021],
+			'金沙社区':[114.40294,22.752892],
+			'坑梓社区':[114.395825,22.756225],
+			'老坑社区':[114.365983,22.73284],
+			'六和社区':[114.344604,22.697302],
+			'六联社区':[114.40294,22.741091],
+			'龙田社区':[114.369274,22.742836],
+			'马峦社区':[114.355687,22.666458],
+			'南布社区':[114.372859,22.705973],
+			'坪环社区':[114.372859,22.705973],
+			'坪山社区':[114.346916,22.69265],
+			'沙湖社区':[114.325936,22.682307],
+			'沙坣社区':[114.373923,22.693111],
+			'沙田社区':[114.406319,22.763419],
+			'石井社区':[114.389032,22.694423],
+			'汤坑社区':[114.320551,22.671878],
+			'田头社区':[114.406326,22.697318],
+			'田心社区':[114.329624,22.623161],
+			'秀新社区':[114.38354,22.746137],
+			'竹坑社区':[114.372771,22.704758]
+        };
+
+        var option = {
+{#            legend: {#}
+{#                 textStyle:{color:'white'},#}
+{#            },#}
+            xAxis: [{
+                type: "value",
+                axisLine: {
+                    show: false
+                },
+                axisTick: {
+                    show: false
+                },
+                axisLabel: {
+                    show: false
+                },
+                splitLine: {
+                    show: false
+                }
+            }],
+            yAxis: [{
+                type: "category",
+
+                axisLine: {
+                    show: false
+                },
+                axisTick: {
+                    show: false,
+                    alignWithLabel: true
+                },
+                axisLabel: {
+                    textStyle:{
+                       show:false
+                    }
+                },
+                data:name
+            }],
+            toolbox: {
+                                show:true,
+                                x:'500',
+                                feature: {
+                                        saveAsImage: {}
+                                    },
+                                    iconStyle:{normal:{borderColor:'white'}}
+                                },
+            grid: [{
+                left: "70%",
+                right: "20",
+                bottom: "5",
+                top:'60%',
+                containLabel: true
+            }],
+            title:[{
+                text:cityName+'热点社区',
+                x:0,
+                textStyle:{
+                    color:'rgb(0,147,203)',
+                    fontSize:14
+                }
+            },{
+                text: "热点社区排名Top10",
+                textStyle: {
+                    color: "#fff",
+                    fontWeight: "bold",
+                    fontSize: 14
+                },
+                top: "55%",
+                left: "69%"
+            }],
+            tooltip:[{
+                show:true
+            }],
+{#            backgroundColor:'#fff',#}
+
+            geo:{
+                left:'10',
+                show:true,
+                map:'city',
+                type:'map',
+                zlevel:0,
+                label: {
+                    normal: {
+                        show: false
+                    },
+                    emphasis: {
+                        show: true,
+                        fontSize:20,
+                        color:'rgb(255,255,255)'
+                    }
+                },
+                roam: false,
+                itemStyle: {
+                    normal: {
+                        color: 'rgb(0,90,157)',
+                        borderColor: 'rgb(0,90,157)',
+                        borderWidth: 1
+                    },
+                    emphasis: {
+                        areaColor: '#2B91B7'
+
+
+
+                    }
+                }
+            },
+            series: [{
+                name: "事件数量",
+                type: "bar",
+                data: cityData,
+                barWidth:7,
+                barCategoryGap: "50%",
+                zlevel:2,
+                label: {
+                    normal: {
+                        left:'right',
+                        show: true,
+                        position: "right",
+                        formatter: function(params) {
+                            return params.data.value;
+                        },
+                        textStyle: {color: "white"} //color of value
+                    }
+                },
+        itemStyle: {
+            normal: {
+                color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
+                    offset: 0,
+                    color: "rgb(231,91,250)" // 0% 处的颜色
+                }, {
+                    offset: 1,
+                    color: "rgb(80,50,180)" // 100% 处的颜色
+                }], false),
+                barBorderRadius: [30, 30,30, 30]
+            }
+        }
+    },]
+
+        };//option
+        chart.setOption(option);
+
+        function renderEachCity() {
+            var width=$('#'+id).width();
+            var height=$('#'+id).height();
+            // option.xAxis.push();
+            // option.yAxis.push();
+            // option.grid.push();
+            // option.series.push();
+            echarts.util.each(rawData, function(dataItem, idx) {
+
+                var geoCoord = geoCoordMap[dataItem.name];
+                var coord = chart.convertToPixel('geo', geoCoord);
+                idx += '';
+
+
+                option.xAxis.push({
+                    id: idx,
+                    gridId: idx,
+                    type: 'category',
+                    //show: true,
+                    data:[dataItem.name],
+                    boundaryGap:true,
+                    axisLine: {
+                        show: false
+                    },
+                    axisTick: {
+
+
+                        show: false
+
+                    },
+                    axisLabel: {
+                        interval: 0,
+                        fontSize: 10,
+
+                        color: "#fff"
+
+                    }
+                });
+                option.yAxis.push({
+                    id: idx,
+                    gridId: idx,
+                    show: false
+                });
+                option.grid.push({
+                    id: idx,
+                    width: 10,
+                    height: (dataItem.value),
+                    left: coord[0],
+                    bottom:height-coord[1]+10
+                });
+
+
+                option.series.push({
+                    name:dataItem.name,
+                    type: 'bar',
+                    xAxisId: idx,
+                    yAxisId: idx,
+                     zlevel:1,
+                    road:true,
+                    itemStyle: {
+                        normal: {
+                            color:new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                offset: 0,
+                                color: 'rgba(231,91,250,1)'
+                            }, {
+                                offset: 1,
+                                color: 'rgba(80,50,180,0.8)'
+                            }], false),
+                            borderColor:'rgba(255,255,255,0.8)',
+                            barBorderRadius: [30, 30,30, 30]
+                        },
+                        emphasis:{
+                            color:new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                offset: 1,
+                                color: 'rgb(231,91,250)'
+                            }, {
+                                offset: 0,
+                                color: 'rgb(80,50,180)'
+                            }], false)
+                        }
+                    },
+                    data: [dataItem.value]
+                });
+
+
+            });
+            chart.setOption(option);
+        }
+
+        renderEachCity();
+
+
+        chart.on('click',function(params){console.log(params);})
+    });
+    }
+    Map('view3_div',rawData,'深圳市');
+
+                        }
+                    }
+            ) }, 8000);
+
+
+
+
+
+         if(flag3==0){
+                      var rawData = [];
+
+                    var data = {{view3_lst3|safe}};
+
+                    if (data==''){alert('抱歉！目前尚无数据');}
+                    else {
+                        for (var i = 0; i < data.length; i++) {
+                            rawData.push({name: Object.keys(data[i])[0], value: data[i][Object.keys(data[i])[0]]});
+                        }
+                    }
+
+
+                function Map(id,cityData,cityName){
+                    var name=cityData.map(name=>name.name);
+
+
+                    var chart =  echarts.init(document.getElementById(id));
+                    $.getJSON('{% static 'js/pingsan.json' %}', function (usaJson) {
+                     echarts.registerMap('city', usaJson);
+                    var geoCoordMap = {
+                    '碧岭社区':[114.366572,22.714099],
+                    '和平社区':[114.355455,22.696885],
+                    '江岭社区':[114.373582,22.697497],
+        			'金龟社区':[114.405579,22.662021],
+        			'金沙社区':[114.40294,22.752892],
+        			'坑梓社区':[114.395825,22.756225],
+        			'老坑社区':[114.365983,22.73284],
+        			'六和社区':[114.344604,22.697302],
+        			'六联社区':[114.40294,22.741091],
+        			'龙田社区':[114.369274,22.742836],
+        			'马峦社区':[114.355687,22.666458],
+        			'南布社区':[114.372859,22.705973],
+        			'坪环社区':[114.372859,22.705973],
+        			'坪山社区':[114.346916,22.69265],
+        			'沙湖社区':[114.325936,22.682307],
+        			'沙坣社区':[114.373923,22.693111],
+        			'沙田社区':[114.406319,22.763419],
+        			'石井社区':[114.389032,22.694423],
+        			'汤坑社区':[114.320551,22.671878],
+        			'田头社区':[114.406326,22.697318],
+        			'田心社区':[114.329624,22.623161],
+        			'秀新社区':[114.38354,22.746137],
+        			'竹坑社区':[114.372771,22.704758]
+                };
+
+                var option = {
+        {#            legend: {#}
+        {#                 textStyle:{color:'white'},#}
+        {#            },#}
+                    xAxis: [{
+                        type: "value",
+                        axisLine: {
+                            show: false
+                        },
+                        axisTick: {
+                            show: false
+                        },
+                        axisLabel: {
+                            show: false
+                        },
+                        splitLine: {
+                            show: false
+                        }
+                    },],
+                    yAxis: [{
+                        type: "category",
+
+                        axisLine: {
+                            show: false
+                        },
+                        axisTick: {
+                            show: false,
+                            alignWithLabel: true
+                        },
+                        axisLabel: {
+                            textStyle:{
+                               show:false
+                            }
+                        },
+                        data:name
+                    },],
+                    toolbox: {
+                                show:true,
+                                x:'500',
+                                feature: {
+                                        saveAsImage: {}
+                                    },
+                                    iconStyle:{normal:{borderColor:'white'}}
+                                },
+                    grid: [{
+                        left: "70%",
+                        right: "20",
+                        bottom: "10",
+                        top:'60%',
+                        containLabel: true
+                    }],
+                    title:[{
+                        text:cityName+'热点社区',
+                        x:0,
+                        textStyle:{
+                            color:'rgb(0,147,203)',
+                            fontSize:14
+                        }
+                    },{
+                        text: "热点社区排名Top10",
+                        textStyle: {
+                            color: "#fff",
+                            fontWeight: "bold",
+                            fontSize: 14
+                        },
+                        top: "55%",
+                        left: "69%"
+                    }],
+                    tooltip:[{
+                        show:true
+                    }],
+        {#            backgroundColor:'#fff',#}
+
+                    geo:{
+                        left:'10',
+                        show:true,
+                        map:'city',
+                        type:'map',
+                        zlevel:0,
+                        label: {
+                            normal: {
+                                show: false
+                            },
+                            emphasis: {
+                                show: true,
+                                fontSize:20,
+                                color:'rgb(255,255,255)'
+                            }
+                        },
+                        roam: false,
+                        itemStyle: {
+                            normal: {
+                                color: 'rgb(0,90,157)',
+                                borderColor: 'rgb(0,90,157)',
+                                borderWidth: 1
+                            },
+                            emphasis: {
+                                areaColor: '#2B91B7'
+
+
+
+                            }
+                        }
+                    },
+                    series: [{
+                        name: "事件数量",
+                        type: "bar",
+                        data: cityData,
+                        barWidth:7,
+                        barCategoryGap: "50%",
+                        zlevel:2,
+                        label: {
+                            normal: {
+                                left:'right',
+                                show: true,
+                                position: "right",
+                                formatter: function(params) {
+                                    return params.data.value;
+                                },
+                                textStyle: {color: "white"} //color of value
+                            }
+                        },
+                itemStyle: {
+                    normal: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
+                            offset: 0,
+                            color: "rgb(231,91,250)" // 0% 处的颜色
+                        }, {
+                            offset: 1,
+                            color: "rgb(80,50,180)" // 100% 处的颜色
+                        }], false),
+                        barBorderRadius: [30, 30,30, 30],
+                    }
+                }
+            },]
+
+                };//option
+                chart.setOption(option);
+
+                function renderEachCity() {
+                    var width=$('#'+id).width();
+                    var height=$('#'+id).height();
+                    // option.xAxis.push();
+                    // option.yAxis.push();
+                    // option.grid.push();
+                    // option.series.push();
+                    echarts.util.each(rawData, function(dataItem, idx) {
+
+                        var geoCoord = geoCoordMap[dataItem.name];
+                        var coord = chart.convertToPixel('geo', geoCoord);
+                        idx += '';
+
+                        option.xAxis.push({
+                            id: idx,
+                            gridId: idx,
+                            type: 'category',
+                            //show: true,
+                            data:[dataItem.name],
+                            boundaryGap:true,
+                            axisLine: {
+                                show: false
+                            },
+                            axisTick: {
+
+
+                                show: false
+
+                            },
+                            axisLabel: {
+                                interval: 0,
+                                fontSize: 10,
+
+                                color: "#fff"
+                            }
+                        });
+                        option.yAxis.push({
+                            id: idx,
+                            gridId: idx,
+                            show: false
+                        });
+                        option.grid.push({
+                            id: idx,
+                            width: 10,
+                            height: (dataItem.value),
+                            left: coord[0],
+                            bottom:height-coord[1]+10
+                        });
+
+
+                        option.series.push({
+                            name:dataItem.name,
+                            type: 'bar',
+                            xAxisId: idx,
+                            yAxisId: idx,
+                             zlevel:1,
+                            road:true,
+                            itemStyle: {
+                                normal: {
+                                    color:new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                        offset: 0,
+                                        color: 'rgba(231,91,250,1)'
+                                    }, {
+                                        offset: 1,
+                                        color: 'rgba(80,50,180,0.8)'
+                                    }], false),
+                                    borderColor:'rgba(255,255,255,0.8)',
+                                    barBorderRadius: [30, 30,30, 30]
+                                },
+                                emphasis:{
+                                    color:new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                        offset: 1,
+                                        color: 'rgb(231,91,250)'
+                                    }, {
+                                        offset: 0,
+                                        color: 'rgb(80,50,180)'
+                                    }], false)
+                                }
+                            },
+                            data: [dataItem.value]
+                        });
+
+
+                    });
+                    chart.setOption(option);
+                }
+
+                renderEachCity();
+
+
+                chart.on('click',function(params){console.log(params);})
+            });
+            }
+            Map('view3_div',rawData,'深圳市');
+
+
+                }
+
+    </script>
+
+
+    <script>
+        var flag4_1 = 0;
+        $("#view4_1").click(function(){
+            flag4_1 = 1;
+            $.ajax(
+                    {
+                        url:'/view4_1/',
+                        type:'GET',
+                        data:{
+                            "month":$("#view4_month").val()
+                        },
+                        success:function(resp){
+                            console.log(resp.lst4)
+                            if(resp.lst4.length==0){alert('抱歉！目前尚无数据')}
+                            else{// 基于准备好的dom，初始化echarts实例
+                         var myChart = echarts.init(document.getElementById('visualization4'));
+                         var option = {
+                             title : {
+                                text: '查看事件处理情况',
+                                x:'center',
+                                textStyle:{color:'white'}
+                            },
+                              toolbox: {
+                                show:true,
+                                x:'500',
+                                feature: {
+                                        saveAsImage: {}
+                                    },
+                                    iconStyle:{normal:{borderColor:'white'}}
+                                },
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b}: {c} ({d}%)"
+                            },
+                            legend: {
+                                orient: 'vertical',
+                                x: 'left',
+                                textStyle:{color:'white'},
+                                data:resp.lst1
+
+                            },
+                            series: [
+                                {
+                                    name:'访问来源',
+                                    type:'pie',
+
+                                    selectedMode: 'single',
+                                    radius: [0, '20%'],
+                                    center: ['60%','44%'],
+
+                                    label: {
+                                        normal: {
+                                            position: 'inner'
+                                        }
+                                    },
+                                    labelLine: {
+                                        normal: {
+                                            show: false
+                                        }
+                                    },
+                                    data:resp.lst2
+                                },
+                                {
+                                    name:'事件类型',
+                                    type:'pie',
+                                    radius: ['30%', '45%'],
+                                    center: ['60%','44%'],
+                                    data:resp.lst4
+                                }
+                            ]
+                        };
+                        // 使用刚指定的配置项和数据显示图表。
+                        myChart.setOption(option);
+                        }}
+
+                    }
+            )
+        })
+
+
+        if(flag4_1==0){
+               // 基于准备好的dom，初始化echarts实例
+                 var myChart = echarts.init(document.getElementById('visualization4'));
+                 var option = {
+                     title : {
+                        text: '查看事件处理情况',
+                        x:'center',
+                        textStyle:{color:'white'}
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b}: {c} ({d}%)"
+                    },
+                       toolbox: {
+                                show:true,
+                                x:'500',
+                                feature: {
+                                        saveAsImage: {}
+                                    },
+                                    iconStyle:{normal:{borderColor:'white'}}
+                                },
+                    legend: {
+                        orient: 'vertical',
+                        x: 'left',
+                        textStyle:{color:'white'},
+                        data:{{lst1|safe}}
+
+                    },
+                    series: [
+                        {
+                            name:'访问来源',
+                            type:'pie',
+
+                            selectedMode: 'single',
+                            radius: [0, '20%'],
+                            center: ['60%','44%'],
+
+                            label: {
+                                normal: {
+                                    position: 'inner'
+                                }
+                            },
+                            labelLine: {
+                                normal: {
+                                    show: false
+                                }
+                            },
+                            data:{{lst2|safe}}
+                        },
+                        {
+                            name:'事件类型',
+                            type:'pie',
+                            radius: ['30%', '45%'],
+                            center: ['60%','44%'],
+                            data:{{lst4|safe}}
+                        }
+                    ]
+                };
+		        // 使用刚指定的配置项和数据显示图表。
+		        myChart.setOption(option);
+
+        }
+    </script>
+
+        <script>
+        var flag4_2 = 0;
+        $("#view4_2").click(function(){
+            flag4_2 = 1;
+            $.ajax(
+                    {
+                        url:'/view4_2/',
+                        type:'GET',
+                        data:{
+                            "quarter":$("#quarter").val(),
+                        },
+                        success:function(resp){
+
+                            // 基于准备好的dom，初始化echarts实例
+                         var myChart = echarts.init(document.getElementById('visualization4'));
+                         var option = {
+                             title : {
+                                text: '查看事件处理情况',
+                                x:'center',
+                                textStyle:{color:'white'}
+                            },
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b}: {c} ({d}%)"
+                            },
+                               toolbox: {
+                                show:true,
+                                x:'500',
+                                feature: {
+                                        saveAsImage: {}
+                                    },
+                                    iconStyle:{normal:{borderColor:'white'}}
+                                },
+                            legend: {
+                                orient: 'vertical',
+                                x: 'left',
+                                textStyle:{color:'white'},
+                                data:resp.lst1
+
+                            },
+                            series: [
+                                {
+                                    name:'访问来源',
+                                    type:'pie',
+
+                                    selectedMode: 'single',
+                                    radius: [0, '20%'],
+                                    center: ['60%','44%'],
+
+                                    label: {
+                                        normal: {
+                                            position: 'inner'
+                                        }
+                                    },
+                                    labelLine: {
+                                        normal: {
+                                            show: false
+                                        }
+                                    },
+                                    data:resp.lst2
+                                },
+                                {
+                                    name:'事件类型',
+                                    type:'pie',
+                                    radius: ['30%', '45%'],
+                                    center: ['60%','44%'],
+                                    data:resp.lst4
+                                }
+                            ]
+                        };
+                        // 使用刚指定的配置项和数据显示图表。
+                        myChart.setOption(option);
+                        }
+                    }
+            )
+        })
+
+
+        if(flag4_2==0){
+               // 基于准备好的dom，初始化echarts实例
+                 var myChart = echarts.init(document.getElementById('visualization4'));
+                 var option = {
+                     title : {
+                        text: '查看事件处理情况',
+                        x:'center',
+                        textStyle:{color:'white'}
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b}: {c} ({d}%)"
+                    },
+                      toolbox: {
+                                show:true,
+                                x:'500',
+                                feature: {
+                                        saveAsImage: {}
+                                    },
+                                    iconStyle:{normal:{borderColor:'white'}}
+                                },
+                    legend: {
+                        orient: 'vertical',
+                        x: 'left',
+                        textStyle:{color:'white'},
+                        data:{{lst1|safe}}
+
+                    },
+                    series: [
+                        {
+                            name:'访问来源',
+                            type:'pie',
+
+                            selectedMode: 'single',
+                            radius: [0, '20%'],
+                            center: ['60%','44%'],
+
+                            label: {
+                                normal: {
+                                    position: 'inner'
+                                }
+                            },
+                            labelLine: {
+                                normal: {
+                                    show: false
+                                }
+                            },
+                            data:{{lst2|safe}}
+                        },
+                        {
+                            name:'事件类型',
+                            type:'pie',
+                            radius: ['30%', '45%'],
+                            center: ['60%','44%'],
+                            data:{{lst4|safe}}
+                        }
+                    ]
+                };
+		        // 使用刚指定的配置项和数据显示图表。
+		        myChart.setOption(option);
+
+        }
+    </script>
+
+        <script>
+        var flag4_3 = 0;
+        $("#view4_3").click(function(){
+            flag4_3 = 1;
+            $.ajax(
+                    {
+                        url:'/view4_3/',
+                        type:'GET',
+                        data:{
+                            "startDate":$("#startDate").val(),
+                            "endDate":$("#endDate").val()
+                        },
+                        success:function(resp){
+                            if (resp.lst1==""){alert(resp.message);}
+                            if(resp.lst2.length==0){alert("抱歉！目前尚无数据");}
+                            // 基于准备好的dom，初始化echarts实例
+                            else{
+                             var myChart = echarts.init(document.getElementById('visualization4'));
+                             var option = {
+                             title : {
+                                text: '查看事件处理情况',
+                                x:'center',
+                                textStyle:{color:'white'}
+                            },
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b}: {c} ({d}%)"
+                            },
+                            legend: {
+                                orient: 'vertical',
+                                x: 'left',
+                                textStyle:{color:'white'},
+                                data:resp.lst1
+
+                            },
+                              toolbox: {
+                                show:true,
+                                x:'500',
+                                feature: {
+                                        saveAsImage: {}
+                                    },
+                                    iconStyle:{normal:{borderColor:'white'}}
+                                },
+                            series: [
+                                {
+                                    name:'访问来源',
+                                    type:'pie',
+
+                                    selectedMode: 'single',
+                                    radius: [0, '20%'],
+                                    center: ['60%','44%'],
+
+                                    label: {
+                                        normal: {
+                                            position: 'inner'
+                                        }
+                                    },
+                                    labelLine: {
+                                        normal: {
+                                            show: false
+                                        }
+                                    },
+                                    data:resp.lst2
+                                },
+                                {
+                                    name:'事件类型',
+                                    type:'pie',
+                                    radius: ['30%', '45%'],
+                                    center: ['60%','44%'],
+                                    data:resp.lst4
+                                }
+                            ]
+                        };
+                        // 使用刚指定的配置项和数据显示图表。
+                        myChart.setOption(option);}
+
+                        }
+                    }
+            )
+        })
+
+        if(flag4_3==0){
+               // 基于准备好的dom，初始化echarts实例
+                 var myChart = echarts.init(document.getElementById('visualization4'));
+                 var option = {
+                     title : {
+                        text: '查看事件处理情况',
+                        x:'center',
+                        textStyle:{color:'white'}
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b}: {c} ({d}%)"
+                    },
+                      toolbox: {
+                                show:true,
+                                x:'500',
+                                feature: {
+                                        saveAsImage: {}
+                                    },
+                                    iconStyle:{normal:{borderColor:'white'}}
+                                },
+                    legend: {
+                        orient: 'vertical',
+                        x: 'left',
+                        textStyle:{color:'white'},
+                        data:{{lst1|safe}}
+
+                    },
+                    series: [
+                        {
+                            name:'访问来源',
+                            type:'pie',
+
+                            selectedMode: 'single',
+                            radius: [0, '20%'],
+                            center: ['60%','44%'],
+
+                            label: {
+                                normal: {
+                                    position: 'inner'
+                                }
+                            },
+                            labelLine: {
+                                normal: {
+                                    show: false
+                                }
+                            },
+                            data:{{lst2|safe}}
+                        },
+                        {
+                            name:'事件类型',
+                            type:'pie',
+                            radius: ['30%', '45%'],
+                            center: ['60%','44%'],
+                            data:{{lst4|safe}}
+                        }
+                    ]
+                };
+		        // 使用刚指定的配置项和数据显示图表。
+		        myChart.setOption(option);
+
+        }
+
+    </script>
+
+    <script>
+        $("#view4_1").click(function(){
+            document.getElementById("info").innerHTML='您选择了按月份范围查看~~';
+        })
+        $("#view4_2").click(function(){
+            document.getElementById("info").innerHTML='您选择了按季度查看~~';
+        })
+        $("#view4_3").click(function(){
+            document.getElementById("info").innerHTML='您选择了按时间范围查看~~';
+        })
+    </script>
+
+    <div id="box" class="box">
+        <div class="box-in"></div>
+    </div>
+
+    <script>
+
+    var timer  = null;
+
+    box.onclick = function(){
+
+        //取消前一次 刷新帧数
+
+        cancelAnimationFrame(timer);
+
+        //启动帧数
+
+        timer = requestAnimationFrame(function fn(){
+
+            var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+
+            if(oTop > 0){
+
+                document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+
+                timer = requestAnimationFrame(fn);
+
+            }else{
+
+                cancelAnimationFrame(timer);
+
+            }
+
+        });
+
+    }
+
+    </script>
+    </div>
+
+</body>
+</html>
